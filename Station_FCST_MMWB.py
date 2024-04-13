@@ -98,12 +98,19 @@ def prepare_t2m_mae(start_date_utc, end_date_utc, fstH, fn_t2m, fn_obs, fn_mae):
 
 def prepare_corrcoef(ifstH, fn_corrcoef): 
     """
-    根据历史数据，计算站点预报的相关系数
+    calculate the corrcoef from history data
     """
+
+    ### set path start ###
+    # these path should be the same as [de-biased forecast's error path] 
+    #   in Station_FCST_BC.py
+    # for example:  fn_err_ecmwf = fn_err_t2m_ecmwf_bced_s
+    #               fn_err_ncep = fn_err_t2m_ncep_bced_s
     fn_err_ecmwf = './result_train/BC_fcst_err_ecmwf_{fh:03d}.csv'.format(fh=ifstH)
     fn_err_ncep = './result_train/BC_fcst_err_ncep_{fh:03d}.csv'.format(fh=ifstH)
     fn_err_cma = './result_train/BC_fcst_err_cma_{fh:03d}.csv'.format(fh=ifstH)
     fn_err_jp = './result_train/BC_fcst_err_jp_{fh:03d}.csv'.format(fh=ifstH)
+    ### set path end ###
 
     err1 = pd.read_csv(fn_err_ecmwf).iloc[:, 8:].values
     err2 = pd.read_csv(fn_err_ncep).iloc[:, 8:].values
@@ -533,94 +540,57 @@ def main_proc(d1_utc, d2_utc, ifstH, result_path):
     """
     主程序
     """
-    # observation
+
+    ### set path start ###
+    # observation data path
     fn_obs = 'z:/YLRC_STATION/TEMP/rt0/{t:%Y/%Y%m%d%H}.000'
 
-    # 经过偏差订正的 站点预报
+    # de-biased station forecat, should be the same as [de-biased forecast path] in Station_FCST_BC.py
     fn_t2m_ecmwf_bced_s = './raw_data/ECMWF/{t:%Y%m%d%H/SBCEDFCST_%Y%m%d%H}.{fh:03d}.m3'
     fn_t2m_NCEP_bced_s = './raw_data/NCEP/{t:%Y%m%d%H/SBCEDFCST_%Y%m%d%H}.{fh:03d}.m3'
     fn_t2m_CMA_bced_s = './raw_data/CMA/{t:%Y%m%d%H/SBCEDFCST_%Y%m%d%H}.{fh:03d}.m3'
     fn_t2m_jp_bced_s = './raw_data/jp/{t:%Y%m%d%H/SBCEDFCST_%Y%m%d%H}.{fh:03d}.m3'
 
-    # mae data
+    # pre-calculated rolling updated MAE data path 
     fn_mae_ecmwf_bced_s = './raw_data/ECMWF/{t:%Y%m%d%H/SMAE_BCED_%Y%m%d%H}.{fh:03d}.m3'
     fn_mae_NCEP_bced_s = './raw_data/NCEP/{t:%Y%m%d%H/SMAE_BCED_%Y%m%d%H}.{fh:03d}.m3'
     fn_mae_CMA_bced_s = './raw_data/CMA/{t:%Y%m%d%H/SMAE_BCED_%Y%m%d%H}.{fh:03d}.m3'
     fn_mae_jp_bced_s = './raw_data/jp/{t:%Y%m%d%H/SMAE_BCED_%Y%m%d%H}.{fh:03d}.m3'
 
-    # corrcoef data 
+    # corrcoef data path 
+    # shoudl be the same as in "__main__"
     fn_corrcoef = './result_train/corrcoef_{fh:03d}.csv'.format(fh=ifstH)
     
-    # 融合预报 data
-    # w ~ 1/MAE
-    fn_bld_basic1_ec_ncep = './raw_data/BLD_EC_NCEP/{t:%Y%m%d%H/SBasic1_%Y%m%d%H}.{fh:03d}.m3'
-    fn_bld_basic1_ec_cma = './raw_data/BLD_EC_CMA/{t:%Y%m%d%H/SBasic1_%Y%m%d%H}.{fh:03d}.m3'
-    fn_bld_basic1_ncep_cma = './raw_data/BLD_NCEP_CMA/{t:%Y%m%d%H/SBasic1_%Y%m%d%H}.{fh:03d}.m3'
-    fn_bld_basic1_ec_ncep_cma = './raw_data/BLD_EC_NCEP_CMA/{t:%Y%m%d%H/SBasic1_%Y%m%d%H}.{fh:03d}.m3'
+    # blended forecast data path
+    # basic1: w ~ 1/MAE
     fn_bld_basic1_ec_jp = './raw_data/BLD_EC_JP/{t:%Y%m%d%H/SBasic1_%Y%m%d%H}.{fh:03d}.m3'
     fn_bld_basic1_ec_ncep_cma_jp = './raw_data/BLD_EC_NCEP_CMA_JP/{t:%Y%m%d%H/SBasic1_%Y%m%d%H}.{fh:03d}.m3'
-    # w ~ 1/(MAE^2)
-    fn_bld_basic2_ec_ncep = './raw_data/BLD_EC_NCEP/{t:%Y%m%d%H/SBasic2_%Y%m%d%H}.{fh:03d}.m3'
-    fn_bld_basic2_ec_cma = './raw_data/BLD_EC_CMA/{t:%Y%m%d%H/SBasic2_%Y%m%d%H}.{fh:03d}.m3'
-    fn_bld_basic2_ncep_cma = './raw_data/BLD_NCEP_CMA/{t:%Y%m%d%H/SBasic2_%Y%m%d%H}.{fh:03d}.m3'
-    fn_bld_basic2_ec_ncep_cma = './raw_data/BLD_EC_NCEP_CMA/{t:%Y%m%d%H/SBasic2_%Y%m%d%H}.{fh:03d}.m3'
-    fn_bld_basic2_ec_jp = './raw_data/BLD_EC_JP/{t:%Y%m%d%H/SBasic2_%Y%m%d%H}.{fh:03d}.m3'
-    fn_bld_basic2_ec_ncep_cma_jp = './raw_data/BLD_EC_NCEP_CMA_JP/{t:%Y%m%d%H/SBasic2_%Y%m%d%H}.{fh:03d}.m3'
-    # w improved by correlation coefficients
-    fn_bld_cc_ec_ncep = './raw_data/BLD_EC_NCEP/{t:%Y%m%d%H/SCC_%Y%m%d%H}.{fh:03d}.m3'
-    fn_bld_cc_ec_cma = './raw_data/BLD_EC_CMA/{t:%Y%m%d%H/SCC_%Y%m%d%H}.{fh:03d}.m3'
-    fn_bld_cc_ncep_cma = './raw_data/BLD_NCEP_CMA/{t:%Y%m%d%H/SCC_%Y%m%d%H}.{fh:03d}.m3'
-    fn_bld_cc_ec_ncep_cma = './raw_data/BLD_EC_NCEP_CMA/{t:%Y%m%d%H/SCC_%Y%m%d%H}.{fh:03d}.m3'
+    # cc: w improved by correlation coefficients
     fn_bld_cc_ec_jp = './raw_data/BLD_EC_JP/{t:%Y%m%d%H/SCC_%Y%m%d%H}.{fh:03d}.m3'
     fn_bld_cc_ec_ncep_cma_jp = './raw_data/BLD_EC_NCEP_CMA_JP/{t:%Y%m%d%H/SCC_%Y%m%d%H}.{fh:03d}.m3'
-    # err file 
-    # w ~ 1/MAE
-    fn_bld_basic1_err_ec_ncep = result_path + '/bld_basic1_err_ec_ncep_{fh:03d}.csv'.format(fh=ifstH)
-    fn_bld_basic1_err_ec_cma = result_path + '/bld_basic1_err_ec_cma_{fh:03d}.csv'.format(fh=ifstH)
-    fn_bld_basic1_err_ncep_cma = result_path + '/bld_basic1_err_ncep_cma_{fh:03d}.csv'.format(fh=ifstH)
-    fn_bld_basic1_err_ec_ncep_cma = result_path + '/bld_basic1_err_ec_ncep_cma_{fh:03d}.csv'.format(fh=ifstH)
+    
+    # error files data path
+    # basic1: w ~ 1/MAE
     fn_bld_basic1_err_ec_jp = result_path + '/bld_basic1_err_ec_jp_{fh:03d}.csv'.format(fh=ifstH)
     fn_bld_basic1_err_ec_ncep_cma_jp = result_path + '/bld_basic1_err_ec_ncep_cma_jp_{fh:03d}.csv'.format(fh=ifstH)
-    
-    # w ~ 1/(MAE**2)
-    fn_bld_basic2_err_ec_ncep = result_path + '/bld_basic2_err_ec_ncep_{fh:03d}.csv'.format(fh=ifstH)
-    fn_bld_basic2_err_ec_cma = result_path + '/bld_basic2_err_ec_cma_{fh:03d}.csv'.format(fh=ifstH)
-    fn_bld_basic2_err_ncep_cma = result_path + '/bld_basic2_err_ncep_cma_{fh:03d}.csv'.format(fh=ifstH)
-    fn_bld_basic2_err_ec_ncep_cma = result_path + '/bld_basic2_err_ec_ncep_cma_{fh:03d}.csv'.format(fh=ifstH)
-    fn_bld_basic2_err_ec_jp = result_path + '/bld_basic2_err_ec_jp_{fh:03d}.csv'.format(fh=ifstH)
-    fn_bld_basic2_err_ec_ncep_cma_jp = result_path + '/bld_basic2_err_ec_ncep_cma_jp_{fh:03d}.csv'.format(fh=ifstH)
-    # w improved by correlation coefficients
-    fn_bld_cc_err_ec_ncep = result_path + '/bld_cc_err_ec_ncep_{fh:03d}.csv'.format(fh=ifstH)
-    fn_bld_cc_err_ec_cma = result_path + '/bld_cc_err_ec_cma_{fh:03d}.csv'.format(fh=ifstH)
-    fn_bld_cc_err_ncep_cma = result_path + '/bld_cc_err_ncep_cma_{fh:03d}.csv'.format(fh=ifstH)
-    fn_bld_cc_err_ec_ncep_cma = result_path + '/bld_cc_err_ec_ncep_cma_{fh:03d}.csv'.format(fh=ifstH)
+    # cc: w improved by correlation coefficients
     fn_bld_cc_err_ec_jp = result_path + '/bld_cc_err_ec_jp_{fh:03d}.csv'.format(fh=ifstH)
     fn_bld_cc_err_ec_ncep_cma_jp = result_path + '/bld_cc_err_ec_ncep_cma_jp_{fh:03d}.csv'.format(fh=ifstH)
-    # 滚动计算 mae
-    #prepare_t2m_mae(d1_utc, d2_utc, ifstH, fn_t2m_ecmwf_bced_s, fn_obs, fn_mae_ecmwf_bced_s)
-    #prepare_t2m_mae(d1_utc, d2_utc, ifstH, fn_t2m_NCEP_bced_s, fn_obs, fn_mae_NCEP_bced_s)
-    #prepare_t2m_mae(d1_utc, d2_utc, ifstH, fn_t2m_CMA_bced_s, fn_obs, fn_mae_CMA_bced_s)
-    prepare_t2m_mae(d1_utc, d2_utc, ifstH, fn_t2m_jp_bced_s, fn_obs, fn_mae_jp_bced_s)
-    # basic blending w ~ (1/mae)
-    #station_blending_2fcst_basic_MAE(d1_utc, d2_utc, ifstH, fn_t2m_ecmwf_bced_s, fn_t2m_NCEP_bced_s, fn_bld_basic1_ec_ncep, fn_mae_ecmwf_bced_s, fn_mae_NCEP_bced_s, wfunc=wfunc1)
-    #station_blending_2fcst_basic_MAE(d1_utc, d2_utc, ifstH, fn_t2m_ecmwf_bced_s, fn_t2m_CMA_bced_s, fn_bld_basic1_ec_cma, fn_mae_ecmwf_bced_s, fn_mae_CMA_bced_s, wfunc=wfunc1)
-    #station_blending_2fcst_basic_MAE(d1_utc, d2_utc, ifstH, fn_t2m_NCEP_bced_s, fn_t2m_CMA_bced_s, fn_bld_basic1_ncep_cma, fn_mae_NCEP_bced_s, fn_mae_CMA_bced_s, wfunc=wfunc1)
-    #station_blending_3fcst_basic_MAE(d1_utc, d2_utc, ifstH, fn_t2m_ecmwf_bced_s, fn_t2m_NCEP_bced_s, fn_t2m_CMA_bced_s, fn_bld_basic1_ec_ncep_cma, fn_mae_ecmwf_bced_s, fn_mae_NCEP_bced_s, fn_mae_CMA_bced_s, wfunc=wfunc1)
-    station_blending_2fcst_basic_MAE(d1_utc, d2_utc, ifstH, fn_t2m_ecmwf_bced_s, fn_t2m_jp_bced_s, fn_bld_basic1_ec_jp, fn_mae_ecmwf_bced_s, fn_mae_jp_bced_s, wfunc=wfunc1)
+    ### set path end ###
     
-    # basic blending w ~ (1/(mae^2))
-    #station_blending_2fcst_basic_MAE(d1_utc, d2_utc, ifstH, fn_t2m_ecmwf_bced_s, fn_t2m_NCEP_bced_s, fn_bld_basic2_ec_ncep, fn_mae_ecmwf_bced_s, fn_mae_NCEP_bced_s, wfunc=wfunc2)
-    #station_blending_2fcst_basic_MAE(d1_utc, d2_utc, ifstH, fn_t2m_ecmwf_bced_s, fn_t2m_CMA_bced_s, fn_bld_basic2_ec_cma, fn_mae_ecmwf_bced_s, fn_mae_CMA_bced_s, wfunc=wfunc2)
-    #station_blending_2fcst_basic_MAE(d1_utc, d2_utc, ifstH, fn_t2m_NCEP_bced_s, fn_t2m_CMA_bced_s, fn_bld_basic2_ncep_cma, fn_mae_NCEP_bced_s, fn_mae_CMA_bced_s, wfunc=wfunc2)
-    #station_blending_3fcst_basic_MAE(d1_utc, d2_utc, ifstH, fn_t2m_ecmwf_bced_s, fn_t2m_NCEP_bced_s, fn_t2m_CMA_bced_s, fn_bld_basic2_ec_ncep_cma, fn_mae_ecmwf_bced_s, fn_mae_NCEP_bced_s, fn_mae_CMA_bced_s, wfunc=wfunc2)
+    # pre-calculate rolling updated mae
+    prepare_t2m_mae(d1_utc, d2_utc, ifstH, fn_t2m_ecmwf_bced_s, fn_obs, fn_mae_ecmwf_bced_s)
+    prepare_t2m_mae(d1_utc, d2_utc, ifstH, fn_t2m_NCEP_bced_s, fn_obs, fn_mae_NCEP_bced_s)
+    prepare_t2m_mae(d1_utc, d2_utc, ifstH, fn_t2m_CMA_bced_s, fn_obs, fn_mae_CMA_bced_s)
+    prepare_t2m_mae(d1_utc, d2_utc, ifstH, fn_t2m_jp_bced_s, fn_obs, fn_mae_jp_bced_s)
+    
+    # basic blending ECMWF + JAPAN-HR, w ~ (1/mae)
+    station_blending_2fcst_basic_MAE(d1_utc, d2_utc, ifstH, fn_t2m_ecmwf_bced_s, fn_t2m_jp_bced_s, fn_bld_basic1_ec_jp, fn_mae_ecmwf_bced_s, fn_mae_jp_bced_s, wfunc=wfunc1)
 
-    # improved blending
-    #station_blending_2fcst_cc_MAE(d1_utc, d2_utc, ifstH, fn_t2m_ecmwf_bced_s, fn_t2m_NCEP_bced_s, fn_bld_cc_ec_ncep, fn_mae_ecmwf_bced_s, fn_mae_NCEP_bced_s, fn_corrcoef, cc_idx=3)
-    #station_blending_2fcst_cc_MAE(d1_utc, d2_utc, ifstH, fn_t2m_ecmwf_bced_s, fn_t2m_CMA_bced_s, fn_bld_cc_ec_cma, fn_mae_ecmwf_bced_s, fn_mae_CMA_bced_s, fn_corrcoef, cc_idx=4)
-    #station_blending_2fcst_cc_MAE(d1_utc, d2_utc, ifstH, fn_t2m_NCEP_bced_s, fn_t2m_CMA_bced_s, fn_bld_cc_ncep_cma, fn_mae_NCEP_bced_s, fn_mae_CMA_bced_s, fn_corrcoef, cc_idx=6)
-    #station_blending_3fcst_cc_MAE(d1_utc, d2_utc, ifstH, fn_t2m_ecmwf_bced_s, fn_t2m_NCEP_bced_s, fn_t2m_CMA_bced_s, fn_bld_cc_ec_ncep_cma, fn_mae_ecmwf_bced_s, fn_mae_NCEP_bced_s, fn_mae_CMA_bced_s, fn_corrcoef)
+    # improved blending ECMWF + JAPAN-HR
     station_blending_2fcst_cc_MAE(d1_utc, d2_utc, ifstH, fn_t2m_ecmwf_bced_s, fn_t2m_jp_bced_s, fn_bld_cc_ec_jp, fn_mae_ecmwf_bced_s, fn_mae_jp_bced_s, fn_corrcoef, cc_idx=5)
 
+    # basic blending and improved blending all four models
     fn_fcsts = {'ec': fn_t2m_ecmwf_bced_s, 
                 'ncep': fn_t2m_NCEP_bced_s, 
                 'cma': fn_t2m_CMA_bced_s, 
@@ -633,26 +603,11 @@ def main_proc(d1_utc, d2_utc, ifstH, result_path):
     station_blending_multi_cc_MAE(d1_utc, d2_utc, ifstH, fn_bld_cc_ec_ncep_cma_jp, fn_fcsts, fn_maes, fn_corrcoef, 
                                   ['stid', 'lon', 'lat', 'ec_ncep_cc', 'ec_cma_cc', 'ec_jp_cc', 'ncep_cma_cc', 'ncep_jp_cc', 'cma_jp_cc'])
 
+    # statistical the forecast errors for 4 blended forecasts
     t2m_verification(d1_utc, d2_utc, ifstH, fn_bld_basic1_ec_jp, fn_obs, fn_bld_basic1_err_ec_jp)
     t2m_verification(d1_utc, d2_utc, ifstH, fn_bld_basic1_ec_ncep_cma_jp, fn_obs, fn_bld_basic1_err_ec_ncep_cma_jp)
     t2m_verification(d1_utc, d2_utc, ifstH, fn_bld_cc_ec_ncep_cma_jp, fn_obs, fn_bld_cc_err_ec_ncep_cma_jp)
     t2m_verification(d1_utc, d2_utc, ifstH, fn_bld_cc_ec_jp, fn_obs, fn_bld_cc_err_ec_jp)
-    # error analysis 
-    #t2m_verification(d1_utc, d2_utc, ifstH, fn_bld_basic1_ec_ncep, fn_obs, fn_bld_basic1_err_ec_ncep)
-    #t2m_verification(d1_utc, d2_utc, ifstH, fn_bld_basic1_ec_cma, fn_obs, fn_bld_basic1_err_ec_cma)
-    #t2m_verification(d1_utc, d2_utc, ifstH, fn_bld_basic1_ncep_cma, fn_obs, fn_bld_basic1_err_ncep_cma)
-    #t2m_verification(d1_utc, d2_utc, ifstH, fn_bld_basic1_ec_ncep_cma, fn_obs, fn_bld_basic1_err_ec_ncep_cma)
-
-    #t2m_verification(d1_utc, d2_utc, ifstH, fn_bld_basic2_ec_ncep, fn_obs, fn_bld_basic2_err_ec_ncep)
-    #t2m_verification(d1_utc, d2_utc, ifstH, fn_bld_basic2_ec_cma, fn_obs, fn_bld_basic2_err_ec_cma)
-    #t2m_verification(d1_utc, d2_utc, ifstH, fn_bld_basic2_ncep_cma, fn_obs, fn_bld_basic2_err_ncep_cma)
-    #t2m_verification(d1_utc, d2_utc, ifstH, fn_bld_basic2_ec_ncep_cma, fn_obs, fn_bld_basic2_err_ec_ncep_cma)
-
-    #t2m_verification(d1_utc, d2_utc, ifstH, fn_bld_cc_ec_ncep, fn_obs, fn_bld_cc_err_ec_ncep)
-    #t2m_verification(d1_utc, d2_utc, ifstH, fn_bld_cc_ec_cma, fn_obs, fn_bld_cc_err_ec_cma)
-    #t2m_verification(d1_utc, d2_utc, ifstH, fn_bld_cc_ncep_cma, fn_obs, fn_bld_cc_err_ncep_cma)
-    #t2m_verification(d1_utc, d2_utc, ifstH, fn_bld_cc_ec_ncep_cma, fn_obs, fn_bld_cc_err_ec_ncep_cma)
-
     
     fns = [fn_bld_basic1_err_ec_jp, fn_bld_basic1_err_ec_ncep_cma_jp, 
            fn_bld_cc_err_ec_jp, fn_bld_cc_err_ec_ncep_cma_jp]
@@ -665,7 +620,7 @@ def main_proc(d1_utc, d2_utc, ifstH, result_path):
 if __name__ == "__main__": 
     fn_corrcoef = './result_train/corrcoef_{fh:03d}.csv'
 
-    fstHs = list(range(3, 73, 3))
+    fstHs = [24]
     d1_utc = datetime(2022, 3, 1, 0)
     d2_utc = datetime(2023, 3, 1, 0)
     for ifstH in fstHs:
@@ -673,7 +628,6 @@ if __name__ == "__main__":
         main_proc(d1_utc, d2_utc, ifstH, './result_train')
         pass
     
-
     d1_utc = datetime(2023, 3, 1, 0)
     d2_utc = datetime(2024, 3, 1, 0)
     for ifstH in fstHs:

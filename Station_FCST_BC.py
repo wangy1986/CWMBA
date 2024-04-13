@@ -141,61 +141,69 @@ def main_proc(d1_utc, d2_utc, ifstH, result_path):
     主程序流程
     """
 
-    # 原始预报数据 & 实况数据
+    ### set path start ###
+    # raw model forecast and observation data path
     fn_t2m_ecmwf = 'z:/ECMWF/T2M/{t:%Y%m%d%H/%Y%m%d%H}.{fh:03d}.nc'
     fn_t2m_ncep = 'z:/NCEP_GFS/T2M/{t:%Y%m%d%H/%Y%m%d%H}.{fh:03d}.nc'
     fn_t2m_CMA = 'z:/GRAPES_GFS/T2M/{t:%Y%m%d%H/%Y%m%d%H}.{fh:03d}.nc'
     fn_t2m_jp = 'z:/JAPAN_HR/T2M/{t:%Y%m%d%H/%Y%m%d%H}.{fh:03d}.nc'
     fn_obs = 'z:/YLRC_STATION/TEMP/rt0/{t:%Y/%Y%m%d%H}.000'
     
-    # bias data 存储位置
+    # you can set the belowing path to anywhere you want
+    # bias data path
     fn_bias_ecmwf = './raw_data/ECMWF/{t:%Y%m%d%H/SBIAS_%Y%m%d%H}.{fh:03d}.m3'
     fn_bias_ncep = './raw_data/ncep/{t:%Y%m%d%H/SBIAS_%Y%m%d%H}.{fh:03d}.m3'
     fn_bias_CMA = './raw_data/CMA/{t:%Y%m%d%H/SBIAS_%Y%m%d%H}.{fh:03d}.m3'
     fn_bias_jp = './raw_data/jp/{t:%Y%m%d%H/SBIAS_%Y%m%d%H}.{fh:03d}.m3'
 
-    # 模式 DMO 站点预报
+    # model raw station forecast path
     fn_t2m_ecmwf_s = './raw_data/ECMWF/{t:%Y%m%d%H/SFCST_%Y%m%d%H}.{fh:03d}.m3'
     fn_t2m_ncep_s = './raw_data/ncep/{t:%Y%m%d%H/SFCST_%Y%m%d%H}.{fh:03d}.m3'
     fn_t2m_CMA_s = './raw_data/CMA/{t:%Y%m%d%H/SFCST_%Y%m%d%H}.{fh:03d}.m3'
     fn_t2m_jp_s = './raw_data/jp/{t:%Y%m%d%H/SFCST_%Y%m%d%H}.{fh:03d}.m3'
 
-    # 经过偏差订正的 站点预报
+    # de-biased forecast path
     fn_t2m_ecmwf_bced_s = './raw_data/ECMWF/{t:%Y%m%d%H/SBCEDFCST_%Y%m%d%H}.{fh:03d}.m3'
     fn_t2m_ncep_bced_s = './raw_data/ncep/{t:%Y%m%d%H/SBCEDFCST_%Y%m%d%H}.{fh:03d}.m3'
     fn_t2m_CMA_bced_s = './raw_data/CMA/{t:%Y%m%d%H/SBCEDFCST_%Y%m%d%H}.{fh:03d}.m3'
     fn_t2m_jp_bced_s = './raw_data/jp/{t:%Y%m%d%H/SBCEDFCST_%Y%m%d%H}.{fh:03d}.m3'
 
-    # 站点预报的误差数据
+    # raw forecast's error path
     fn_err_t2m_ecmwf_s = result_path + '/DMO_fcst_err_ecmwf_{fh:03d}.csv'.format(fh=ifstH)
-    fn_err_t2m_ecmwf_bced_s = result_path + '/BC_fcst_err_ecmwf_{fh:03d}.csv'.format(fh=ifstH)
-
     fn_err_t2m_ncep_s = result_path + '/DMO_fcst_err_ncep_{fh:03d}.csv'.format(fh=ifstH)
-    fn_err_t2m_ncep_bced_s = result_path + '/BC_fcst_err_ncep_{fh:03d}.csv'.format(fh=ifstH)
-    
     fn_err_t2m_CMA_s = result_path + '/DMO_fcst_err_CMA_{fh:03d}.csv'.format(fh=ifstH)
-    fn_err_t2m_CMA_bced_s = result_path + '/BC_fcst_err_CMA_{fh:03d}.csv'.format(fh=ifstH)
-
     fn_err_t2m_jp_s = result_path + '/DMO_fcst_err_jp_{fh:03d}.csv'.format(fh=ifstH)
-    fn_err_t2m_jp_bced_s = result_path + '/BC_fcst_err_jp_{fh:03d}.csv'.format(fh=ifstH)
 
-    #prepare_t2m_bc(d1_utc, d2_utc, ifstH, fn_t2m_ecmwf, fn_obs, fn_bias_ecmwf)
-    #prepare_t2m_bc(d1_utc, d2_utc, ifstH, fn_t2m_ncep, fn_obs, fn_bias_ncep)
-    #prepare_t2m_bc(d1_utc, d2_utc, ifstH, fn_t2m_CMA, fn_obs, fn_bias_CMA)
+    # de-biased forecast's error path
+    fn_err_t2m_ecmwf_bced_s = result_path + '/BC_fcst_err_ecmwf_{fh:03d}.csv'.format(fh=ifstH)
+    fn_err_t2m_ncep_bced_s = result_path + '/BC_fcst_err_ncep_{fh:03d}.csv'.format(fh=ifstH)
+    fn_err_t2m_CMA_bced_s = result_path + '/BC_fcst_err_CMA_{fh:03d}.csv'.format(fh=ifstH)
+    fn_err_t2m_jp_bced_s = result_path + '/BC_fcst_err_jp_{fh:03d}.csv'.format(fh=ifstH)
+    
+    ### set path end ###
+
+    # prepare the rolling-updated bias 
+    prepare_t2m_bc(d1_utc, d2_utc, ifstH, fn_t2m_ecmwf, fn_obs, fn_bias_ecmwf)
+    prepare_t2m_bc(d1_utc, d2_utc, ifstH, fn_t2m_ncep, fn_obs, fn_bias_ncep)
+    prepare_t2m_bc(d1_utc, d2_utc, ifstH, fn_t2m_CMA, fn_obs, fn_bias_CMA)
     prepare_t2m_bc(d1_utc, d2_utc, ifstH, fn_t2m_jp, fn_obs, fn_bias_jp)
 
-    #do_t2m_bc(d1_utc, d2_utc, ifstH, fn_t2m_ecmwf, fn_bias_ecmwf, fn_t2m_ecmwf_s, fn_t2m_ecmwf_bced_s)
-    #do_t2m_bc(d1_utc, d2_utc, ifstH, fn_t2m_ncep, fn_bias_ncep, fn_t2m_ncep_s, fn_t2m_ncep_bced_s)
-    #do_t2m_bc(d1_utc, d2_utc, ifstH, fn_t2m_CMA, fn_bias_CMA, fn_t2m_CMA_s, fn_t2m_CMA_bced_s)
+    # de-bias
+    do_t2m_bc(d1_utc, d2_utc, ifstH, fn_t2m_ecmwf, fn_bias_ecmwf, fn_t2m_ecmwf_s, fn_t2m_ecmwf_bced_s)
+    do_t2m_bc(d1_utc, d2_utc, ifstH, fn_t2m_ncep, fn_bias_ncep, fn_t2m_ncep_s, fn_t2m_ncep_bced_s)
+    do_t2m_bc(d1_utc, d2_utc, ifstH, fn_t2m_CMA, fn_bias_CMA, fn_t2m_CMA_s, fn_t2m_CMA_bced_s)
     do_t2m_bc(d1_utc, d2_utc, ifstH, fn_t2m_CMA, fn_bias_jp, fn_t2m_jp_s, fn_t2m_jp_bced_s)
 
-    #t2m_verification(d1_utc, d2_utc, ifstH, fn_t2m_ecmwf_s, fn_obs, fn_err_t2m_ecmwf_s)
-    #t2m_verification(d1_utc, d2_utc, ifstH, fn_t2m_ecmwf_bced_s, fn_obs, fn_err_t2m_ecmwf_bced_s)
-    #t2m_verification(d1_utc, d2_utc, ifstH, fn_t2m_ncep_s, fn_obs, fn_err_t2m_ncep_s)
+    # calculate raw forecast's error
+    t2m_verification(d1_utc, d2_utc, ifstH, fn_t2m_ecmwf_s, fn_obs, fn_err_t2m_ecmwf_s)
+    t2m_verification(d1_utc, d2_utc, ifstH, fn_t2m_ecmwf_bced_s, fn_obs, fn_err_t2m_ecmwf_bced_s)
+    t2m_verification(d1_utc, d2_utc, ifstH, fn_t2m_ncep_s, fn_obs, fn_err_t2m_ncep_s)
     t2m_verification(d1_utc, d2_utc, ifstH, fn_t2m_jp_s, fn_obs, fn_err_t2m_jp_s)
-    #t2m_verification(d1_utc, d2_utc, ifstH, fn_t2m_ncep_bced_s, fn_obs, fn_err_t2m_ncep_bced_s)
-    #t2m_verification(d1_utc, d2_utc, ifstH, fn_t2m_CMA_s, fn_obs, fn_err_t2m_CMA_s)
-    #t2m_verification(d1_utc, d2_utc, ifstH, fn_t2m_CMA_bced_s, fn_obs, fn_err_t2m_CMA_bced_s)
+    
+    # calculate de-biased forecast's error
+    t2m_verification(d1_utc, d2_utc, ifstH, fn_t2m_ncep_bced_s, fn_obs, fn_err_t2m_ncep_bced_s)
+    t2m_verification(d1_utc, d2_utc, ifstH, fn_t2m_CMA_s, fn_obs, fn_err_t2m_CMA_s)
+    t2m_verification(d1_utc, d2_utc, ifstH, fn_t2m_CMA_bced_s, fn_obs, fn_err_t2m_CMA_bced_s)
     t2m_verification(d1_utc, d2_utc, ifstH, fn_t2m_jp_bced_s, fn_obs, fn_err_t2m_jp_bced_s)
 
 
@@ -212,7 +220,7 @@ def main_proc(d1_utc, d2_utc, ifstH, result_path):
 
 if __name__ == "__main__": 
     
-    fstHs = list(range(3, 73, 3))
+    fstHs = [24]
     
     d1_utc = datetime(2022, 3, 1, 0)
     d2_utc = datetime(2023, 3, 1, 0)
