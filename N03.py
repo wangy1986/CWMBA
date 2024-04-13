@@ -28,10 +28,10 @@ from matplotlib import pyplot as plt
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter, MultipleLocator, AutoMinorLocator
 from matplotlib.font_manager import FontProperties
 
-lgd_font = FontProperties(family='Times New Roman', size=14)
-title_font = {'fontname': 'Times New Roman', 'fontsize': 16}
-axis_font = {'fontname': 'Times New Roman', 'fontsize': 14}
-tick_font = {'fontname': 'Times New Roman', 'fontsize': 12}
+lgd_font = FontProperties(family='Arial', size=14)
+title_font = {'fontname': 'Arial', 'fontsize': 16}
+axis_font = {'fontname': 'Arial', 'fontsize': 14}
+tick_font = {'fontname': 'Arial', 'fontsize': 12}
 
 def bld_sigma(w1, w2, mae1, mae2, cc):
     a1 = np.sqrt(np.pi/2)
@@ -204,15 +204,15 @@ def fig_N03(st_id, fstH):
     fig = plt.figure(figsize=(12, 12))
     ax1 = fig.add_subplot(2, 1, 1)
     x = np.arange(3, 73, 3)
-    ax1.plot(x, maes[:, 0], 'r--', label='ECMWF+JAPAN | w ~ 1/MAE')
-    ax1.plot(x, maes[:, 1], 'b--', label='ECMWF+NCEP+CMA+JAPAN | w ~ 1/MAE')
-    ax1.plot(x, maes[:, 2], 'r-',  label='ECMWF+JAPAN | w see Eq. (16)')
-    ax1.plot(x, maes[:, 3], 'b-',  label='ECMWF+NCEP+CMA+JAPAN | w see Eq. (16)')
+    ax1.plot(x, maes[:, 0], 'g--', label='ECMWF+JAPAN | w ~ 1/MAE')
+    ax1.plot(x, maes[:, 1], 'm--', label='ECMWF+NCEP+CMA+JAPAN | w ~ 1/MAE')
+    ax1.plot(x, maes[:, 2], 'g-',  label='ECMWF+JAPAN | w see Eq. (16)')
+    ax1.plot(x, maes[:, 3], 'm-',  label='ECMWF+NCEP+CMA+JAPAN | w see Eq. (16)')
 
     ax1.legend(prop=lgd_font, framealpha=0)
     ax1.set_title('forecast MAE for different blending algorithm', fontdict=title_font)
     ax1.set_xlabel('forecast lead time (H)', fontdict=axis_font)
-    ax1.set_ylabel('MAE (℃)', fontdict=axis_font)
+    ax1.set_ylabel('MAE (K)', fontdict=axis_font)
     
     ax1.xaxis.set_ticks(np.arange(0, 73, 12))
     ax1.xaxis.set_minor_locator(AutoMinorLocator(4))
@@ -224,7 +224,7 @@ def fig_N03(st_id, fstH):
 
     # fig 03b
     ax2 = fig.add_subplot(2, 1, 2)
-    ax2.plot(w1, y2, 'r-', label='Estimated blending MAE curve')
+    ax2.plot(w1, y2, 'g-', label='Estimated blending MAE curve')
     ax2.plot([0,0], [1.5, bld_mae(0, 1, st_mae_ec, st_mae_jp, st_cc)], 'k--')
     ax2.plot([1,1], [1.5, bld_mae(1, 0, st_mae_ec, st_mae_jp, st_cc)], 'k--')
     ax2.plot(w1_twb, mae_twb, 'k+', label='the traditional method', markersize=14)
@@ -233,7 +233,7 @@ def fig_N03(st_id, fstH):
     ax2.legend(prop=lgd_font, framealpha=0)
     ax2.set_title('Station %d blending MAE' % (st_id), fontdict=title_font)
     ax2.set_xlabel('ECMWF weight', fontdict=axis_font)
-    ax2.set_ylabel('Estimated MAE (℃)', fontdict=axis_font)
+    ax2.set_ylabel('Estimated MAE (K)', fontdict=axis_font)
     
     ax2.xaxis.set_ticks(np.arange(-0.25, 2.01, 0.25))
     ax1.xaxis.set_minor_locator(AutoMinorLocator(5))

@@ -31,10 +31,10 @@ from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 from matplotlib.font_manager import FontProperties
 
 
-lgd_font = FontProperties(family='Times New Roman', size=14)
-title_font = {'fontname': 'Times New Roman', 'fontsize': 16}
-axis_font = {'fontname': 'Times New Roman', 'fontsize': 14}
-tick_font = {'fontname': 'Times New Roman', 'fontsize': 12}
+lgd_font = FontProperties(family='Arial', size=14)
+title_font = {'fontname': 'Arial', 'fontsize': 16}
+axis_font = {'fontname': 'Arial', 'fontsize': 14}
+tick_font = {'fontname': 'Arial', 'fontsize': 12}
 
 
 
@@ -94,8 +94,8 @@ def figN02(fn_data):
     ax1.axis('equal')
     ax1.legend(prop=lgd_font, framealpha=0)
     ax1.set_title('ECMWF', fontdict=title_font)
-    ax1.set_xlabel('Estimated MAE (℃)', fontdict=axis_font)
-    ax1.set_ylabel('Real MAE (℃)', fontdict=axis_font)
+    ax1.set_xlabel('Estimated MAE (K)', fontdict=axis_font)
+    ax1.set_ylabel('Real MAE (K)', fontdict=axis_font)
     ax1.set_xticklabels(ax1.get_xticks(), fontdict=tick_font)
     ax1.set_yticklabels(ax1.get_yticks(), fontdict=tick_font)
 
@@ -109,8 +109,8 @@ def figN02(fn_data):
     ax2.axis('equal')
     ax2.legend(prop=lgd_font, framealpha=0)
     ax2.set_title('NCEP-GFS', fontdict=title_font)
-    ax2.set_xlabel('Estimated MAE (℃)', fontdict=axis_font)
-    ax2.set_ylabel('Real MAE (℃)', fontdict=axis_font)
+    ax2.set_xlabel('Estimated MAE (K)', fontdict=axis_font)
+    ax2.set_ylabel('Real MAE (K)', fontdict=axis_font)
     ax2.set_xticklabels(ax2.get_xticks(), fontdict=tick_font)
     ax2.set_yticklabels(ax2.get_yticks(), fontdict=tick_font)
     
@@ -124,8 +124,8 @@ def figN02(fn_data):
     ax3.axis('equal')
     ax3.legend(prop=lgd_font, framealpha=0)
     ax3.set_title('CMA-GFS', fontdict=title_font)
-    ax3.set_xlabel('Estimated MAE (℃)', fontdict=axis_font)
-    ax3.set_ylabel('Real MAE (℃)', fontdict=axis_font)
+    ax3.set_xlabel('Estimated MAE (K)', fontdict=axis_font)
+    ax3.set_ylabel('Real MAE (K)', fontdict=axis_font)
     ax3.set_xticklabels(ax3.get_xticks(), fontdict=tick_font)
     ax3.set_yticklabels(ax3.get_yticks(), fontdict=tick_font)
 
@@ -139,8 +139,8 @@ def figN02(fn_data):
     ax4.axis('equal')
     ax4.legend(prop=lgd_font, framealpha=0)
     ax4.set_title('JAPAN-HR', fontdict=title_font)
-    ax4.set_xlabel('Estimated MAE (℃)', fontdict=axis_font)
-    ax4.set_ylabel('Real MAE (℃)', fontdict=axis_font)
+    ax4.set_xlabel('Estimated MAE (K)', fontdict=axis_font)
+    ax4.set_ylabel('Real MAE (K)', fontdict=axis_font)
     ax4.set_xticklabels(ax4.get_xticks(), fontdict=tick_font)
     ax4.set_yticklabels(ax4.get_yticks(), fontdict=tick_font)
 

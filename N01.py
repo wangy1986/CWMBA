@@ -29,11 +29,10 @@ from matplotlib import pyplot as plt
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 from matplotlib.font_manager import FontProperties
 
-
-lgd_font = FontProperties(family='Times New Roman', size=14)
-title_font = {'fontname': 'Times New Roman', 'fontsize': 16}
-axis_font = {'fontname': 'Times New Roman', 'fontsize': 14}
-tick_font = {'fontname': 'Times New Roman', 'fontsize': 12}
+lgd_font = FontProperties(family='Arial', size=14)
+title_font = {'fontname': 'Arial', 'fontsize': 16}
+axis_font = {'fontname': 'Arial', 'fontsize': 14}
+tick_font = {'fontname': 'Arial', 'fontsize': 12}
 
 
 def prepare(fn_err_ec, fn_err_ncep, fn_err_cma, fn_err_jp, fn_err_bld, fn_output): 
@@ -220,8 +219,8 @@ def figN01(fn_data):
     ax1.axis('equal')
     ax1.legend(prop=lgd_font, framealpha=0)
     ax1.set_title('Estimation of error distribution parameters: μ', fontdict=title_font)
-    ax1.set_xlabel('Estimated μ (℃)', fontdict=axis_font)
-    ax1.set_ylabel('Real μ (℃)', fontdict=axis_font)
+    ax1.set_xlabel('Estimated μ (K)', fontdict=axis_font)
+    ax1.set_ylabel('Real μ (K)', fontdict=axis_font)
     ax1.set_xticklabels(ax1.get_xticks(), fontdict=tick_font)
     ax1.set_yticklabels(ax1.get_yticks(), fontdict=tick_font)
     ax1.xaxis.set_major_formatter(FormatStrFormatter('%.1f'))
@@ -234,8 +233,8 @@ def figN01(fn_data):
     ax2.axis('equal')
     ax2.legend(prop=lgd_font, framealpha=0)
     ax2.set_title('Estimation of error distribution parameters: σ', fontdict=title_font)
-    ax2.set_xlabel('Estimated σ (℃)', fontdict=axis_font)
-    ax2.set_ylabel('Real σ (℃)', fontdict=axis_font)
+    ax2.set_xlabel('Estimated σ (K)', fontdict=axis_font)
+    ax2.set_ylabel('Real σ (K)', fontdict=axis_font)
     ax2.set_xticklabels(ax2.get_xticks(), fontdict=tick_font)
     ax2.set_yticklabels(ax2.get_yticks(), fontdict=tick_font)
     ax2.text(4.0, 0.75, '(b)', fontdict=title_font)
