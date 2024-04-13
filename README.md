@@ -1,7 +1,5 @@
 1. prepare test data.
-   
-  1.1 download data from url: ...
-  
+  1.1 download data from url: www.kaggle.com/datasets/yuwang1986/cwmba-test-dataset-024
   1.2 unzip the test data.
 
 3. calculate the de-biased mulit-model forecasts
