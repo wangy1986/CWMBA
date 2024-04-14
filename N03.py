@@ -210,7 +210,7 @@ def fig_N03(st_id, fstH):
     ax1.plot(x, maes[:, 3], 'm-',  label='ECMWF+NCEP+CMA+JAPAN | w see Eq. (16)')
 
     ax1.legend(prop=lgd_font, framealpha=0)
-    ax1.set_title('forecast MAE for different blending algorithm', fontdict=title_font)
+    ax1.set_title('forecast MAE for different weighted average algorithm', fontdict=title_font)
     ax1.set_xlabel('forecast lead time (H)', fontdict=axis_font)
     ax1.set_ylabel('MAE (K)', fontdict=axis_font)
     
@@ -224,14 +224,14 @@ def fig_N03(st_id, fstH):
 
     # fig 03b
     ax2 = fig.add_subplot(2, 1, 2)
-    ax2.plot(w1, y2, 'g-', label='Estimated blending MAE curve')
+    ax2.plot(w1, y2, 'g-', label='Estimated MAE curve')
     ax2.plot([0,0], [1.5, bld_mae(0, 1, st_mae_ec, st_mae_jp, st_cc)], 'k--')
     ax2.plot([1,1], [1.5, bld_mae(1, 0, st_mae_ec, st_mae_jp, st_cc)], 'k--')
     ax2.plot(w1_twb, mae_twb, 'k+', label='the traditional method', markersize=14)
     ax2.plot(w[0], mae_cwb, 'kx', label='our improved method', markersize=14)
     
     ax2.legend(prop=lgd_font, framealpha=0)
-    ax2.set_title('Station %d blending MAE' % (st_id), fontdict=title_font)
+    ax2.set_title('Station %d blending MAE, correlation coefficient between ECMAF and JAPAN-HR is 0.8656' % (st_id), fontdict=title_font)
     ax2.set_xlabel('ECMWF weight', fontdict=axis_font)
     ax2.set_ylabel('Estimated MAE (K)', fontdict=axis_font)
     
